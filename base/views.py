@@ -6,6 +6,11 @@ from base.serializers import UsersSerializer, RegisterSerializer
 @api_view(['POST'])
 def register_view(request):
 
+    """
+    Register a new uninorte user with his string schedule
+
+    """
+
     register_serializer = RegisterSerializer(data = request.data)
 
     if register_serializer.is_valid():
@@ -24,6 +29,11 @@ def register_view(request):
 
 @api_view(['POST'])
 def results_view(request):
+
+    """
+    Return all possible gaps according to the users and filters provided 
+    
+    """
 
     users_serializers = UsersSerializer(data = request.data)
 
