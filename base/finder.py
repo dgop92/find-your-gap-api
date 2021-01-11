@@ -6,6 +6,19 @@ from base.constants import (BIT_MATRIX_DATA_TYPE, DAYS, DAYS_PER_WEEK, HOURS,
 
 class DistanceComputer:
 
+    """
+    Compute the distance between classes in each free hour (gap)
+
+    Example: 
+    In a bit_matrix each column is a day, so given the the followng day
+    [0, 0, 1, 1, 0, 0, 0, 1]
+
+    The distance will be [2, 1, 0, 0, 1, 2, 1, 0], now the class hours are
+    represented using a zero
+    
+    """
+
+
     def __init__(self, string_schedules):
         self.string_schedules = string_schedules
         self.distance_matrices = []
@@ -103,6 +116,11 @@ class DistanceComputer:
 
 class DistanceMatrixComputer:
 
+    """
+    Compute sum, average and standard deviation of all distances matrices
+
+    """
+
     def __init__(self, distance_matrices, compute_sd = False):
         self.distance_matrices = distance_matrices
 
@@ -172,6 +190,11 @@ class DistanceMatrixComputer:
 
 
 class GapFinder:
+
+    """
+    Find all gaps from a series of string schedules
+    
+    """
 
     def __init__(self, string_schedules, compute_sd = False):
         self.compute_sd = compute_sd
