@@ -1,19 +1,11 @@
-[
-    {
-        "non_field_errors": [
-            "Las contraseñas no coinciden"
-        ]
-    },
-
-    {
-        "non_field_errors": [
-            "Usuario o contraseña incorrecta"
-        ]
-    },
-
-    {
-        "non_field_errors": [
-            "Lo sentimos un error inesperado ocurrió"
-        ]
-    }
-]
+{
+    "non_field_errors": [
+        "Las contraseñas no coinciden",
+        "Usuario o contraseña incorrecta",
+        "Lo sentimos un error inesperado ocurrió"
+    ],
+    
+    "username": [
+        "El usuario ingresado ya fue registrado"
+    ]
+}

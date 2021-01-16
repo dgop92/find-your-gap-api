@@ -1,25 +1,14 @@
-[
-    {
-        "usernames": [
-            "Este campo es requerido."
-        ]
-    },
-
-    {
-        "usernames": [
-            "Debes ingresar por lo menos dos usuarios para ver resultados"
-        ]
-    },
-
-    {
-        "usernames": [
-            "Los siguientes usuarios no se encontraron bob, pedro"
-        ]
-    },
-
-    {
-        "usernames": [
-            "Asegúrate de que ingreses mas de 2 usuarios."
-        ]
-    }
-]
+{
+    "usernames": [
+        "Este campo es requerido."
+    ],
+    "usernames": [
+        "Debes ingresar por lo menos dos usuarios para ver resultados"
+    ],
+    "usernames": [
+        "Los siguientes usuarios no se encontraron bob, pedro"
+    ],
+    "usernames": [
+        "Asegúrate de que ingreses mas de 2 usuarios."
+    ]
+}

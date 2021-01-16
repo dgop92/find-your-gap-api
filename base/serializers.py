@@ -93,7 +93,6 @@ class UsersSerializer(serializers.Serializer):
 
     limit = serializers.IntegerField(
         min_value = 2,
-        max_value = 10,
         required = False
     )
 

@@ -1,3 +1,5 @@
 {
-    "usernames": ["username_1", "username_2"]
+    "usernames": ["username_1", "username_2"],
+    "compute_sd": false,
+    "limit": 10
 }

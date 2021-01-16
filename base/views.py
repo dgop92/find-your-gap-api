@@ -19,7 +19,7 @@ def register_view(request):
 
         return Response(
             user_data,
-            status = status.HTTP_200_OK
+            status = status.HTTP_201_CREATED
         ) 
     else:
         return Response(

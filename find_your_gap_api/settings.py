@@ -46,10 +46,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'base.apps.BaseConfig'
+	'corsheaders',
+    'base.apps.BaseConfig',
 ]
 
 MIDDLEWARE = [
+	'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -59,6 +61,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+whitelist_str = os.environ.get('CORS_ORIGIN_WHITELIST', '')
+CORS_ORIGIN_WHITELIST = whitelist_str.split(',')
 
 ROOT_URLCONF = 'find_your_gap_api.urls'
 
