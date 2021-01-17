@@ -90,7 +90,7 @@ class TestRegister(TestsMixin, TestCase):
         self.post(
             self.register_url,
             data = data,
-            status_code = status.HTTP_200_OK
+            status_code = status.HTTP_201_CREATED
         )
 
     def test_mismatch_password(self):

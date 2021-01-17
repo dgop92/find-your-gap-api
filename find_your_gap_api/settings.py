@@ -50,6 +50,15 @@ INSTALLED_APPS = [
     'base.apps.BaseConfig',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_THROTTLE_CLASSES': (
+        'rest_framework.throttling.AnonRateThrottle',
+        ),
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '500/hour',
+        },
+}
+
 MIDDLEWARE = [
 	'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
