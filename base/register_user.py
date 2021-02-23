@@ -155,6 +155,12 @@ class APIUserRegister(StringSheduleTemplate):
         start_hour = int(start_time_string[:start_time_string.find(":")])
         end_hour = int(end_time_string[:end_time_string.find(":")])
 
+        if start_time_string[-2:] == 'PM' and start_hour != 12:
+            start_hour += 12
+
+        if end_time_string[-2:] == 'PM' and end_hour != 12:
+            end_hour += 12
+        
         return end_hour - start_hour == 2
 
 
