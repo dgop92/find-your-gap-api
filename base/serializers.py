@@ -135,3 +135,14 @@ class UsersSerializer(serializers.Serializer):
         }
 
         return results
+
+
+class UninorteUserSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = UninorteUser
+        fields = (
+            'username',
+            'schedule'
+        )
+    

@@ -6,6 +6,7 @@ from rest_framework.test import APIClient
 
 from base.models import UninorteUser
 from base.urls import results_view_name, register_view_name
+from base import views
 from django.urls import reverse
 
 import base.register_user
@@ -201,3 +202,45 @@ class TestResults(TestsMixin, TestCase):
     def test_empty_body(self):
 
         self.common_negative_test_generator(data = {})
+
+
+class TestGeUser(TestsMixin, TestCase):
+
+    def setUp(self):
+
+        self.init()
+
+        self.user1_data = {
+            "username": "my_user_1",
+            "schedule":"00100001110000110100001010001100000101000000000000000000011100001110000000000000000000000000000000"
+        }
+
+        self.user2_data = {
+            "username": "my_user_2",
+            "schedule":"00100001110000110100001010001100000111000000010001000000011100001110000000000000000000000000000000"
+        }
+
+        UninorteUser.objects.create(**self.user1_data)
+        UninorteUser.objects.create(**self.user2_data)
+    
+    def test_get_user(self):
+
+        get_user_url = reverse(
+            views.UninorteUserDetail.name, 
+            args=['my_user_1']
+        )
+        self.get(get_user_url, status_code = 200)
+        self.compare_json_response_given_data(self.user1_data)
+
+        get_user_url = reverse(
+            views.UninorteUserDetail.name, 
+            args=['my_user_2']
+        )
+        self.get(get_user_url, status_code = 200)
+        self.compare_json_response_given_data(self.user2_data)
+
+        get_user_url = reverse(
+            views.UninorteUserDetail.name, 
+            args=['my_user_10']
+        )
+        self.get(get_user_url, status_code = 404)

@@ -1,7 +1,9 @@
+from base.models import UninorteUser
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from rest_framework import status
-from base.serializers import UsersSerializer, RegisterSerializer
+from rest_framework import generics, status
+from base.serializers import UninorteUserSerializer, UsersSerializer, RegisterSerializer
+
 
 @api_view(['POST'])
 def register_view(request):
@@ -51,4 +53,11 @@ def results_view(request):
             status = status.HTTP_400_BAD_REQUEST
         )
 
+class UninorteUserDetail(generics.RetrieveAPIView):
+
+    queryset = UninorteUser.objects.all()
+    serializer_class = UninorteUserSerializer
+    name = "uninorteuser-detail"
+    lookup_field = 'username'
+    
   
