@@ -1,8 +1,8 @@
 # Find Your Gap API
 
-Find your gap was created to help me find common gaps (free hours between the U classes) given the schedules from a group of classmates and myself
+Find your gap was created to find common gaps (free hours between the U classes) given the schedules from a group of classmates
 
-this project is the api, [Click here to look the client side](https://github.com/DgxProjects29/find-your-gap)
+this project is the api, [click here to look the client side](https://github.com/DgxProjects29/find-your-gap)
 
 ## Project setup
 
