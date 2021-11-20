@@ -2,9 +2,9 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
+from base.core.register_user import APIUserRegister, StringScheduleProcessor
 from base.finder import GapFinder
 from base.models import UninorteUser
-from base.register_user import get_user_register_class
 
 
 class RegisterSerializer(serializers.Serializer):
@@ -37,16 +37,16 @@ class RegisterSerializer(serializers.Serializer):
 
         if "string_schedule" not in data:
 
-            user_register_class = get_user_register_class()
-            user_register = user_register_class()
-            response = user_register.get_user_string_schedule(
-                data["username"], data["password"]
-            )
+            user_register = APIUserRegister(data)
+            string_schedule_processor = StringScheduleProcessor(user_register)
+            string_schedule_processor.find_user_string_schedule()
 
-            if response["status_code"] != 200:
-                raise serializers.ValidationError(_(response["error_meesage"]))
+            if not string_schedule_processor.is_string_schedule_retrieved():
+                raise serializers.ValidationError(
+                    _(string_schedule_processor.error_message)
+                )
 
-            data["string_schedule"] = response["user_string_shedule"]
+            data["string_schedule"] = string_schedule_processor.string_schedule
 
         return data
 

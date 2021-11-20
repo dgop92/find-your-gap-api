@@ -50,6 +50,9 @@ INSTALLED_APPS = [
     "base.apps.BaseConfig",
 ]
 
+API_REGISTER_DATA_FUNC = "base.core.register_user.get_api_register_data"
+UNINORTE_SCHEDULE_API = "https://mihorario.herokuapp.com/api/v1/authentications"
+
 REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_CLASSES": ("rest_framework.throttling.AnonRateThrottle",),
     "DEFAULT_THROTTLE_RATES": {
