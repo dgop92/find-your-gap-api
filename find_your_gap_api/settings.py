@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+
 import dotenv
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -26,117 +27,115 @@ if os.path.isfile(dotenv_file):
 # SECURITY WARNING: keep the secret key used in production secret!
 # The secret key shown here is just for testing
 SECRET_KEY = os.environ.get(
-    'SECRET_KEY', 
-    'nx+-g+d&nfsf0xula57qgn0i4x_6u6!$mdn97=l2ucm+%ozx%&'
+    "SECRET_KEY", "nx+-g+d&nfsf0xula57qgn0i4x_6u6!$mdn97=l2ucm+%ozx%&"
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = (os.environ.get('DEBUG_VALUE', 'True') == 'True')
+DEBUG = os.environ.get("DEBUG_VALUE", "True") == "True"
 
-ALLOWED_HOSTS = ['find-your-gap-api.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ["find-your-gap-api.herokuapp.com", "127.0.0.1"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'rest_framework',
-	'corsheaders',
-    'base.apps.BaseConfig',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "rest_framework",
+    "corsheaders",
+    "base.apps.BaseConfig",
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_THROTTLE_CLASSES': (
-        'rest_framework.throttling.AnonRateThrottle',
-        ),
-    'DEFAULT_THROTTLE_RATES': {
-        'anon': '500/hour',
-        },
+    "DEFAULT_THROTTLE_CLASSES": ("rest_framework.throttling.AnonRateThrottle",),
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "500/hour",
+    },
 }
 
 MIDDLEWARE = [
-	'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-whitelist_str = os.environ.get('CORS_ORIGIN_WHITELIST', '')
-CORS_ORIGIN_WHITELIST = whitelist_str.split(',')
+whitelist_str = os.environ.get("CORS_ORIGIN_WHITELIST", "")
+CORS_ORIGIN_WHITELIST = whitelist_str.split(",")
 
-ROOT_URLCONF = 'find_your_gap_api.urls'
+ROOT_URLCONF = "find_your_gap_api.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'find_your_gap_api.wsgi.application'
+WSGI_APPLICATION = "find_your_gap_api.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-SYSTEM_ENV = os.environ.get('SYSTEM_ENV', None)
-if SYSTEM_ENV == 'GITHUB_WORKFLOW':
+SYSTEM_ENV = os.environ.get("SYSTEM_ENV", None)
+if SYSTEM_ENV == "GITHUB_WORKFLOW":
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'github_actions',
-            'USER': 'postgres',
-            'PASSWORD': 'postgres',
-            'HOST': '127.0.0.1',
-            'PORT': '5432',
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": "github_actions",
+            "USER": "postgres",
+            "PASSWORD": "postgres",
+            "HOST": "127.0.0.1",
+            "PORT": "5432",
         }
     }
 else:
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
         }
     }
 
     import dj_database_url
+
     db_from_env = dj_database_url.config(conn_max_age=600)
-    DATABASES['default'].update(db_from_env)
+    DATABASES["default"].update(db_from_env)
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -144,9 +143,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
-LANGUAGE_CODE = 'es-es'
+LANGUAGE_CODE = "es-es"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -158,5 +157,5 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")

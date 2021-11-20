@@ -50,7 +50,7 @@ We retrieve from the database all _string schedules_ associated with each user t
 
 **string schedule:** A bit array, but in string format representing whether you have class or no. It has a fixed size of 98 because it can be parsed into a 14x7 matrix where rows represent hours and columns days.
 
-**distance matrix:** A matrix where each element represents the distance from a class or the start/end of the day. 
+**distance matrix:** A matrix where each element represents the distance from a class or the start/end of the day.
 
 In other words, if the element is zero, that position in the matrix corresponds to a class, and if the element is greater than zero corresponds to a gap with distance `M[i][j]`
 
