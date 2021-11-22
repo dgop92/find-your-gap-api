@@ -5,7 +5,7 @@ import requests
 from django.conf import settings
 from django.utils.module_loading import import_string
 
-from base.constants import BIT_MATRIX_DATA_TYPE, UNINORTE_SCHEDULE_SIZE
+from base.core.constants import BIT_MATRIX_DATA_TYPE, UNINORTE_SCHEDULE_SIZE
 
 
 def get_api_register_data_function():

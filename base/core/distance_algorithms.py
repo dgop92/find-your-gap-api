@@ -1,6 +1,10 @@
 import numpy as np
 
-from base.constants import BIT_MATRIX_DATA_TYPE, DAYS_PER_WEEK, UNINORTE_SCHEDULE_SIZE
+from base.core.constants import (
+    BIT_MATRIX_DATA_TYPE,
+    DAYS_PER_WEEK,
+    UNINORTE_SCHEDULE_SIZE,
+)
 
 
 def indices_of_sub_arrays_of_zeros(arr):

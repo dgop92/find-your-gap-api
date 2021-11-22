@@ -1,13 +1,13 @@
 import numpy as np
 
-from base.constants import (
-    DAYS,
-    DAYS_PER_WEEK,
-    HOURS,
-    HOURS_PER_DAY,
-    UNINORTE_SCHEDULE_SIZE,
-)
+from base.core.constants import BIT_MATRIX_DATA_TYPE, DAYS, HOURS, HOURS_PER_DAY
 from base.core.distance_algorithms import get_distance_matrix_from_string_schedule
+
+DEFAULT_MATRIX_COMPUTER_OPTIONS = {
+    "compute_sd": False,
+    "no_classes_day": False,
+    "ignore_weekend": True,
+}
 
 
 class DistanceMatrixComputer:
@@ -17,62 +17,67 @@ class DistanceMatrixComputer:
 
     """
 
-    def __init__(self, distance_matrices, compute_sd=False):
+    def __init__(self, distance_matrices, options=None):
         self.distance_matrices = distance_matrices
+        if options:
+            self.options = {**DEFAULT_MATRIX_COMPUTER_OPTIONS, **options}
+        else:
+            self.options = DEFAULT_MATRIX_COMPUTER_OPTIONS
 
-        self.is_compute_sd_needed = compute_sd
-        self.sum_matrix = np.zeros(shape=UNINORTE_SCHEDULE_SIZE, dtype="float32")
-        self.avg_matrix = np.zeros(shape=UNINORTE_SCHEDULE_SIZE, dtype="float32")
-
+        self.sum_matrix = None
+        self.avg_matrix = None
         self.deviation_matrix = None
 
     def compute(self):
-        self.compute_sum()
-        self.compute_avg()
+        if self.options["no_classes_day"]:
+            self.set_to_one_no_classes_days()
 
-        if self.is_compute_sd_needed:
-            self.compute_sd()
+        self.zerofication_of_matrices()
+
+        self.sum_matrix = np.sum(self.distance_matrices, axis=0)
+        self.avg_matrix = np.mean(self.distance_matrices, axis=0, dtype="float32")
+
+        if self.options["compute_sd"]:
+            self.deviation_matrix = np.std(
+                self.distance_matrices, axis=0, dtype="float32"
+            )
+
+    def zerofication_of_matrices(self):
+        zero_indices = set()
+        for distance_matrix in self.distance_matrices:
+            current_zero_indices = np.where(distance_matrix == 0)
+            n = len(current_zero_indices[0])
+            for i in range(n):
+                zero_indices.add(
+                    (current_zero_indices[0][i], current_zero_indices[1][i])
+                )
+
+        for distance_matrix in self.distance_matrices:
+            for index_tuple in zero_indices:
+                distance_matrix[index_tuple[0]][index_tuple[1]] = 0
+
+    def set_to_one_no_classes_days(self):
+
+        for distance_matrix in self.distance_matrices:
+            transpose_matrix = distance_matrix.T
+            for i, day in enumerate(transpose_matrix):
+                if self.options["ignore_weekend"] and i > 4:
+                    break
+
+                has_no_classes = not any(day)
+                if has_no_classes:
+                    transpose_matrix[i] = np.ones(
+                        HOURS_PER_DAY, dtype=BIT_MATRIX_DATA_TYPE
+                    )
+
+    def get_sum_matrix(self):
+        return self.sum_matrix
 
     def get_avg_matrix(self):
         return self.avg_matrix
 
     def get_sd_matrix(self):
         return self.deviation_matrix
-
-    def compute_sum(self):
-        for i in range(HOURS_PER_DAY):
-            for j in range(DAYS_PER_WEEK):
-                for current_distance_matrix in self.distance_matrices:
-                    # if a zero is found, that means is class, so we must
-                    # ignore this day-hour
-                    if current_distance_matrix[i][j] == 0:
-                        self.sum_matrix[i][j] = 0
-                        break
-
-                    self.sum_matrix[i][j] += current_distance_matrix[i][j]
-
-    def compute_avg(self):
-        self.avg_matrix = self.sum_matrix * (1 / len(self.distance_matrices))
-
-    def compute_sd(self):
-
-        self.deviation_matrix = np.zeros(shape=UNINORTE_SCHEDULE_SIZE, dtype="float32")
-
-        for i in range(HOURS_PER_DAY):
-            for j in range(DAYS_PER_WEEK):
-                for current_distance_matrix in self.distance_matrices:
-                    if current_distance_matrix[i][j] == 0:
-                        self.sum_matrix[i][j] = 0
-                        break
-
-                    self.deviation_matrix[i][j] += (
-                        current_distance_matrix[i][j] - self.avg_matrix[i][j]
-                    ) ** 2
-
-        self.deviation_matrix = self.deviation_matrix * (
-            1 / len(self.distance_matrices)
-        )
-        self.deviation_matrix = np.sqrt(self.deviation_matrix)
 
 
 class GapFinder:
