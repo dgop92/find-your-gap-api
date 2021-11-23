@@ -3,6 +3,4 @@ ignore = W50, E203, E501  # error strings, docs and preferred style
 exclude = .flake8,.git,__pycache__
 per-file-ignores =
     # multiple settings
-    communotes/settings/*: F403, F405
-    # signals
-    formulas\apps.py: F401
+    find_your_gap_api/settings/*: F401, F403, F405

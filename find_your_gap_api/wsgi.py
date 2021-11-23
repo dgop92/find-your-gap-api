@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "find_your_gap_api.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "find_your_gap_api.settings.production")
 
 application = get_wsgi_application()
