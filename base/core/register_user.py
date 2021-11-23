@@ -8,8 +8,8 @@ from django.utils.module_loading import import_string
 from base.core.constants import BIT_MATRIX_DATA_TYPE, UNINORTE_SCHEDULE_SIZE
 
 
-def get_api_register_data_function():
-    return import_string(settings.API_REGISTER_DATA_FUNC)
+def get_schedule_data_function():
+    return import_string(settings.SCHEDULE_DATA_FUNCTION)
 
 
 class RegisterUserError(Exception):
@@ -64,13 +64,19 @@ class StringScheduleProcessor:
         return self.string_schedule != ""
 
 
-def get_api_register_data(username, password):
+def get_schedule_data_from_uni_api(username, password):
     url = settings.UNINORTE_SCHEDULE_API
     response = requests.post(
         url,
         data={"username": username, "password": password},
     )
     return response.status_code, json.loads(response.text)
+
+
+def get_schedule_data_for_development(username, password):
+    route = "base/tests/test_data/test_schedule_1.json"
+    with open(route, "r", encoding="utf8") as read_file:
+        return 200, json.load(read_file)
 
 
 class APIUserRegister(ClassHoursGetter):
@@ -109,8 +115,8 @@ class APIUserRegister(ClassHoursGetter):
 
     def find_full_uninorte_schedule(self):
 
-        get_api_register_func = get_api_register_data_function()
-        status_code, json_data = get_api_register_func(self.username, self.password)
+        schedule_data_func = get_schedule_data_function()
+        status_code, json_data = schedule_data_func(self.username, self.password)
 
         # Unauthorized
         if status_code == 401:

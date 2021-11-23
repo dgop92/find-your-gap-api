@@ -13,5 +13,4 @@ DATABASES = {
     }
 }
 
-API_REGISTER_DATA_FUNC = "base.tests.register_utils.get_api_register_data"
-UNINORTE_SCHEDULE_API = "https://mihorario.herokuapp.com/api/v1/authentications"
+SCHEDULE_DATA_FUNCTION = "base.core.register_user.get_schedule_data_for_development"

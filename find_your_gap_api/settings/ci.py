@@ -15,4 +15,4 @@ DATABASES = {
     }
 }
 
-API_REGISTER_DATA_FUNC = "base.tests.register_utils.get_api_register_data"
+SCHEDULE_DATA_FUNCTION = "base.core.register_user.get_schedule_data_for_development"
