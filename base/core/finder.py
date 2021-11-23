@@ -122,7 +122,7 @@ class GapFinder:
         self.results = sort_results(self.results, with_sd=self.compute_sd)
 
     def apply_filter(self, func, *args, **kwargs):
-        self.results = func(*args, **kwargs)
+        self.results = func(self.results, *args, **kwargs)
 
     def get_results(self):
         return self.results

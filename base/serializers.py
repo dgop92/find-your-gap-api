@@ -105,7 +105,7 @@ class UsersSerializer(serializers.Serializer):
         child=serializers.ChoiceField(choices=list(zip([0, 1, 2, 3, 4, 5, 6], DAYS))),
         required=False,
         allow_empty=False,
-        min_length=2,
+        min_length=1,
         max_length=7,
     )
 
@@ -148,10 +148,11 @@ class UsersSerializer(serializers.Serializer):
 
         gap_finder = GapFinder(distance_matrix_computer)
         gap_finder.find_gaps()
-        if "limit" in validated_data:
-            gap_finder.apply_filter(limit_results, limit=validated_data["limit"])
+
         if "days_to_filter" in validated_data:
             gap_finder.apply_filter(filter_by_days, validated_data["days_to_filter"])
+        if "limit" in validated_data:
+            gap_finder.apply_filter(limit_results, limit=validated_data["limit"])
 
         gaps = gap_finder.get_results()
 
