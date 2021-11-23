@@ -2,7 +2,14 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
-from base.core.finder import GapFinder
+from base.core.constants import DAYS
+from base.core.distance_algorithms import get_distance_matrix_from_string_schedule
+from base.core.finder import (
+    DEFAULT_MATRIX_COMPUTER_OPTIONS,
+    DistanceMatrixComputer,
+    GapFinder,
+)
+from base.core.gap_filters import filter_by_days, limit_results
 from base.core.register_user import APIUserRegister, StringScheduleProcessor
 from base.models import UninorteUser
 
@@ -82,9 +89,25 @@ class UsersSerializer(serializers.Serializer):
         },
     )
 
-    compute_sd = serializers.BooleanField(default=True)
+    # MATRIX_COMPUTER_OPTIONS
+    compute_sd = serializers.BooleanField(
+        default=DEFAULT_MATRIX_COMPUTER_OPTIONS["compute_sd"]
+    )
+    no_classes_day = serializers.BooleanField(
+        default=DEFAULT_MATRIX_COMPUTER_OPTIONS["no_classes_day"]
+    )
+    ignore_weekend = serializers.BooleanField(
+        default=DEFAULT_MATRIX_COMPUTER_OPTIONS["ignore_weekend"]
+    )
 
     limit = serializers.IntegerField(min_value=2, required=False)
+    days_to_filter = serializers.ListField(
+        child=serializers.ChoiceField(choices=list(zip([0, 1, 2, 3, 4, 5, 6], DAYS))),
+        required=False,
+        allow_empty=False,
+        min_length=2,
+        max_length=7,
+    )
 
     def validate_usernames(self, usernames):
         users_not_found = []
@@ -105,16 +128,30 @@ class UsersSerializer(serializers.Serializer):
 
         return usernames
 
-    def create(self, validate_data):
-        strings_shedules = []
-        for username in validate_data["usernames"]:
+    def create(self, validated_data):
+        string_schedules = []
+        for username in validated_data["usernames"]:
             user = UninorteUser.objects.get(username=username)
-            strings_shedules.append(user.schedule)
+            string_schedules.append(user.schedule)
 
-        gap_finder = GapFinder(strings_shedules, compute_sd=validate_data["compute_sd"])
+        distance_matrices = list(
+            map(get_distance_matrix_from_string_schedule, string_schedules)
+        )
+        distance_matrix_computer = DistanceMatrixComputer(
+            distance_matrices,
+            options={
+                "compute_sd": validated_data["compute_sd"],
+                "no_classes_day": validated_data["no_classes_day"],
+                "ignore_weekend": validated_data["ignore_weekend"],
+            },
+        )
+
+        gap_finder = GapFinder(distance_matrix_computer)
         gap_finder.find_gaps()
-        limit = validate_data["limit"] if "limit" in validate_data else None
-        gap_finder.apply_filters(limit=limit)
+        if "limit" in validated_data:
+            gap_finder.apply_filter(limit_results, limit=validated_data["limit"])
+        if "days_to_filter" in validated_data:
+            gap_finder.apply_filter(filter_by_days, validated_data["days_to_filter"])
 
         gaps = gap_finder.get_results()
 

@@ -1,7 +1,7 @@
 import numpy as np
 
 from base.core.constants import BIT_MATRIX_DATA_TYPE, DAYS, HOURS, HOURS_PER_DAY
-from base.core.distance_algorithms import get_distance_matrix_from_string_schedule
+from base.core.gap_filters import sort_results
 
 DEFAULT_MATRIX_COMPUTER_OPTIONS = {
     "compute_sd": False,
@@ -19,14 +19,17 @@ class DistanceMatrixComputer:
 
     def __init__(self, distance_matrices, options=None):
         self.distance_matrices = distance_matrices
+        self.sum_matrix = None
+        self.avg_matrix = None
+        self.deviation_matrix = None
+
+        self.set_options(options)
+
+    def set_options(self, options=None):
         if options:
             self.options = {**DEFAULT_MATRIX_COMPUTER_OPTIONS, **options}
         else:
             self.options = DEFAULT_MATRIX_COMPUTER_OPTIONS
-
-        self.sum_matrix = None
-        self.avg_matrix = None
-        self.deviation_matrix = None
 
     def compute(self):
         if self.options["no_classes_day"]:
@@ -87,17 +90,12 @@ class GapFinder:
 
     """
 
-    def __init__(self, string_schedules, compute_sd=False):
-        self.compute_sd = compute_sd
-        self.string_schedules = string_schedules
-        self.distance_matrices = list(
-            map(get_distance_matrix_from_string_schedule, string_schedules)
-        )
-        self.distance_matrix_computer = DistanceMatrixComputer(
-            self.distance_matrices, self.compute_sd
-        )
+    def __init__(self, distance_matrix_computer):
+        self.distance_matrix_computer = distance_matrix_computer
         self.distance_matrix_computer.compute()
         self.results = []
+
+        self.compute_sd = self.distance_matrix_computer.options["compute_sd"]
 
     def find_gaps(self):
 
@@ -112,29 +110,19 @@ class GapFinder:
                         "day": day,
                         "hour": hour,
                         "avg": float(avg_matrix[i][j]),
+                        "day_index": j,
+                        "hour_index": i,
                     }
 
                     if sd_matrix is not None:
-
                         new_gap_item.update({"sd": float(sd_matrix[i][j])})
 
                     self.results.append(new_gap_item)
 
-    def apply_filters(self, limit=None):
+        self.results = sort_results(self.results, with_sd=self.compute_sd)
 
-        if self.compute_sd:
-            sort_func = lambda gap: (gap["avg"], gap["sd"])  # noqa: E731
-        else:
-            sort_func = lambda gap: gap["avg"]  # noqa: E731
-
-        self.results.sort(key=sort_func)
-
-        if limit:
-            results_lenght = len(self.results)
-            if results_lenght > limit:
-                items_to_pop = results_lenght - limit
-                for _ in range(items_to_pop):
-                    self.results.pop()
+    def apply_filter(self, func, *args, **kwargs):
+        self.results = func(*args, **kwargs)
 
     def get_results(self):
         return self.results
