@@ -1,0 +1,32 @@
+{
+    "data": [
+        {
+            "sessions": [
+                {
+                    "day": "L",
+                    "start_time": "6:30 AM",
+                    "end_time": "8:28 AM"
+                },
+                {
+                    "day": "M",
+                    "start_time": "11:30 AM",
+                    "end_time": "12:29 PM"
+                }
+            ]
+        },
+        {
+            "sessions": [
+                {
+                    "day": "M",
+                    "start_time": "7:30 AM",
+                    "end_time": "8:28 AM"
+                },
+                {
+                    "day": "J",
+                    "start_time": "6:30 PM",
+                    "end_time": "8:29 PM"
+                }
+            ]
+        }
+    ]
+}

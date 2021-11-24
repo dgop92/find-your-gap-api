@@ -3,6 +3,29 @@ import json
 from rest_framework.test import APIClient
 
 
+def get_schedule_data_1(username, password):
+    route = "base/tests/test_data/test_schedule_1.json"
+    with open(route, "r", encoding="utf8") as read_file:
+        return 200, json.load(read_file)
+
+
+def get_schedule_data_2(username, password):
+    return 401, {"testing": "is just for testing"}
+
+
+def get_schedule_data_3(username, password):
+    return 500, {"testing": "is just for testing"}
+
+
+def get_schedule_data_4(username, password):
+    route = "base/tests/test_data/test_schedule_2.json"
+    with open(route, "r", encoding="utf8") as read_file:
+        return 200, json.load(read_file)
+
+
+DATA_FUNC_TEMPLATE = "base.tests.test_utils.get_schedule_data_{0}"
+
+
 class TestsMixin:
     def init(self):
 

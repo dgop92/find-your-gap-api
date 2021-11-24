@@ -45,7 +45,7 @@ class StringScheduleProcessor:
         except RegisterUserError as register_user_error:
             self.error_message = str(register_user_error)
         except Exception:
-            self.error_message = "Lo sentimos, un error inesperado ocurrió"
+            self.error_message = "Lo sentimos, ha ocurrido un error inesperado"
 
     def build_bit_matrix(self):
 
@@ -84,7 +84,6 @@ class APIUserRegister(ClassHoursGetter):
         self.username = request_data["username"]
         self.password = request_data["password"]
         self.uninorte_schedule = {}
-        super().__init__(request_data)
 
         # I don't know what is the letter for sunday.
         self.day_index = {
@@ -113,6 +112,11 @@ class APIUserRegister(ClassHoursGetter):
             "7:30 PM": 13,
         }
 
+        self.unauthorized_message = "Usuario o contraseña incorrecta"
+        self.unexpected_message = "Lo sentimos, un error inesperado ocurrió"
+
+        super().__init__(request_data)
+
     def find_full_uninorte_schedule(self):
 
         schedule_data_func = get_schedule_data_function()
@@ -120,10 +124,10 @@ class APIUserRegister(ClassHoursGetter):
 
         # Unauthorized
         if status_code == 401:
-            raise RegisterUserError("Usuario o contraseña incorrecta")
+            raise RegisterUserError(self.unauthorized_message)
 
         if status_code != 200:
-            raise RegisterUserError("Lo sentimos, un error inesperado ocurrió")
+            raise RegisterUserError(self.unexpected_message)
 
         self.uninorte_schedule = json_data
 
@@ -140,14 +144,15 @@ class APIUserRegister(ClassHoursGetter):
                 start_time_index = self.start_hour_index.get(start_time_string, 13)
                 day_index = self.day_index.get(session["day"], 6)
 
-                yield (start_time_index, day_index)
+                class_hours.append((start_time_index, day_index))
 
                 if self.is_two_hours_block(start_time_string, end_time_string):
                     class_hours.append((start_time_index + 1, day_index))
 
         return class_hours
 
-    def is_two_hours_block(self, start_time_string, end_time_string):
+    @staticmethod
+    def is_two_hours_block(start_time_string, end_time_string):
 
         start_hour = int(start_time_string[: start_time_string.find(":")])
         end_hour = int(end_time_string[: end_time_string.find(":")])
