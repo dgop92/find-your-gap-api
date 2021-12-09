@@ -2,6 +2,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
+from base.core.analyze_meetings import get_schedule_meeting_data
 from base.core.constants import DAYS
 from base.core.distance_algorithms import get_distance_matrix_from_string_schedule
 from base.core.finder import (
@@ -11,7 +12,20 @@ from base.core.finder import (
 )
 from base.core.gap_filters import filter_by_days, limit_results
 from base.core.register_user import APIUserRegister, StringScheduleProcessor
+from base.custom_validators import FileExtensionValidator
 from base.models import UninorteUser
+
+
+def get_string_schedules_from_username(usernames):
+    users_not_found = []
+    string_schedules = []
+    for username in usernames:
+        try:
+            user = UninorteUser.objects.get(username=username)
+            string_schedules.append(user.schedule)
+        except UninorteUser.DoesNotExist:
+            users_not_found.append(username)
+    return string_schedules, users_not_found
 
 
 class RegisterSerializer(serializers.Serializer):
@@ -159,6 +173,84 @@ class UsersSerializer(serializers.Serializer):
         results = {"count": len(gaps), "gaps": gap_finder.get_results()}
 
         return results
+
+
+class MeetingSerializer(serializers.Serializer):
+
+    usernames_file = serializers.FileField(
+        required=False, validators=[FileExtensionValidator(allowed_extensions=["txt"])]
+    )
+
+    # username length is roughly 20-30, so by list you can only sent 40
+    extra_usernames = serializers.ListField(
+        required=False,
+        child=serializers.CharField(min_length=1, max_length=30),
+        allow_empty=True,
+        max_length=30,
+        error_messages={
+            "not_a_list": _(
+                'Se esperaba una lista de items pero se obtuvo el tipo "{input_type}".'
+            ),
+            "max_length": _(
+                "No soportamos más de 40 usuarios, Si deseas analizar un gran número de estudiantes es recomendado usar la opción de subir archivo"
+            ),
+        },
+    )
+
+    def validate_usernames_file(self, file):
+        MAX_FILE_SIZE = 10_000
+        # file is not required, so it may be empty
+        if file and file.size > MAX_FILE_SIZE:
+            raise serializers.ValidationError(
+                _(
+                    "El tamaño del archivo es demasiado grande, Asegúrate de que pese menos de 10KB"
+                )
+            )
+        return file
+
+    def validate(self, data):
+        if "usernames_file" not in data and "extra_usernames" not in data:
+            raise serializers.ValidationError(
+                _("Al menos debes proporcionar una forma para obtener los usuarios")
+            )
+
+        final_ss = []
+        users_not_found = []
+        if "usernames_file" in data:
+            file = data["usernames_file"]
+            try:
+                content = file.read().decode("utf-8")
+                usernames = content.split("\n")
+                # ss = string schedules
+                ss, users_not_found1 = get_string_schedules_from_username(usernames)
+                final_ss.extend(ss)
+                users_not_found.extend(users_not_found1)
+            except UnicodeDecodeError:
+                raise serializers.ValidationError(
+                    _("Parece que el archivo proporcionado no es texto")
+                )
+
+        if "extra_usernames" in data:
+            extra_users = data["extra_usernames"]
+            extra_ss, users_not_found2 = get_string_schedules_from_username(extra_users)
+            final_ss.extend(extra_ss)
+            users_not_found.extend(users_not_found2)
+
+        if len(final_ss) < 2:
+            raise serializers.ValidationError(
+                _(
+                    "Algunos usuarios no se encontraron, por ende no se puede realizar el análisis"
+                )
+            )
+
+        data["final_ss"] = final_ss
+        data["users_not_found"] = users_not_found
+
+        return data
+
+    def create(self, validated_data):
+        final_ss = validated_data["final_ss"]
+        return get_schedule_meeting_data(final_ss)
 
 
 class UninorteUserSerializer(serializers.ModelSerializer):

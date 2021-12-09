@@ -3,7 +3,12 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from base.models import UninorteUser
-from base.serializers import RegisterSerializer, UninorteUserSerializer, UsersSerializer
+from base.serializers import (
+    MeetingSerializer,
+    RegisterSerializer,
+    UninorteUserSerializer,
+    UsersSerializer,
+)
 
 
 @api_view(["POST"])
@@ -17,9 +22,7 @@ def register_view(request):
     register_serializer = RegisterSerializer(data=request.data)
 
     if register_serializer.is_valid():
-
         user_data = register_serializer.save()
-
         return Response(user_data, status=status.HTTP_201_CREATED)
     else:
         return Response(register_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -36,12 +39,26 @@ def results_view(request):
     users_serializers = UsersSerializer(data=request.data)
 
     if users_serializers.is_valid():
-
         results = users_serializers.save()
-
         return Response(results, status=status.HTTP_200_OK)
     else:
         return Response(users_serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+def analyze_meeting_view(request):
+
+    """
+    Return all availability information about the hours of the schedule
+    """
+
+    meeting_serializer = MeetingSerializer(data=request.data)
+
+    if meeting_serializer.is_valid():
+        results = meeting_serializer.save()
+        return Response(results, status=status.HTTP_200_OK)
+    else:
+        return Response(meeting_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UninorteUserDetail(generics.RetrieveAPIView):
