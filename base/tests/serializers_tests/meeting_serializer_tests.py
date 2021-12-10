@@ -1,5 +1,6 @@
 from django.test import TestCase
 
+from base.models import UninorteUser
 from base.serializers import MeetingSerializer
 from base.tests.data_factories import get_random_user
 from base.tests.test_utils import create_inmemory_file
@@ -7,14 +8,16 @@ from base.tests.test_utils import create_inmemory_file
 # test_schedule_2
 string_schedule2 = "10000001100000000000000000000000000010000000000000000000000000000000000000000000000000010000001000"
 
-string_schedule3 = "01000000111100011100001010000001000000000000100000010000010100011010001100000000100000000000000000"
-
 
 class TestMeetingSerializer(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.set_of_schedules = set(
             [get_random_user(user_id=i).schedule for i in range(3)]
+        )
+        cls.user_to_filter = UninorteUser.objects.create(
+            username="u_filter",
+            schedule=string_schedule2,
         )
 
     def test_valid_meeting_serializer(self):
@@ -95,3 +98,32 @@ class TestMeetingSerializer(TestCase):
         meeting_serializer = MeetingSerializer(data=data)
         self.assertFalse(meeting_serializer.is_valid())
         self.assertTrue("non_field_errors" in meeting_serializer.errors)
+
+    def test_invalid_username_to_filter(self):
+
+        data = {
+            "extra_usernames": ["my_user_0", "my_user_1"],
+            "username_to_filter": "random",
+        }
+
+        meeting_serializer = MeetingSerializer(data=data)
+        self.assertFalse(meeting_serializer.is_valid())
+        self.assertTrue("username_to_filter" in meeting_serializer.errors)
+
+    def test_hours_filtered_by_user(self):
+
+        data = {
+            "extra_usernames": ["my_user_0", "my_user_1"],
+            "username_to_filter": self.user_to_filter.username,
+        }
+
+        meeting_serializer = MeetingSerializer(data=data)
+        self.assertTrue(meeting_serializer.is_valid())
+        data = meeting_serializer.save()
+        results = data["results"]
+
+        filtered_index = set([(0, 0), (1, 0), (1, 1), (5, 1), (12, 3), (13, 3)])
+
+        for result in results:
+            current_index_tuple = (result["hour_index"], result["day_index"])
+            self.assertTrue(current_index_tuple not in filtered_index)

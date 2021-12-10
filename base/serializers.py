@@ -197,6 +197,10 @@ class MeetingSerializer(serializers.Serializer):
         },
     )
 
+    username_to_filter = serializers.CharField(
+        min_length=1, max_length=30, required=False
+    )
+
     def validate_usernames_file(self, file):
         MAX_FILE_SIZE = 10_000
         # file is not required, so it may be empty
@@ -207,6 +211,16 @@ class MeetingSerializer(serializers.Serializer):
                 )
             )
         return file
+
+    def validate_username_to_filter(self, username):
+        try:
+            if username:
+                UninorteUser.objects.get(username=username)
+        except UninorteUser.DoesNotExist:
+            raise serializers.ValidationError(
+                _("El usuario para filtrar el horario no existe")
+            )
+        return username
 
     def validate(self, data):
         if "usernames_file" not in data and "extra_usernames" not in data:
@@ -250,7 +264,13 @@ class MeetingSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         final_ss = validated_data["final_ss"]
-        return get_schedule_meeting_data(final_ss)
+        if "username_to_filter" in validated_data:
+            ss_to_filter = UninorteUser.objects.get(
+                username=validated_data["username_to_filter"]
+            ).schedule
+        else:
+            ss_to_filter = None
+        return get_schedule_meeting_data(final_ss, ss_to_filter)
 
 
 class UninorteUserSerializer(serializers.ModelSerializer):
