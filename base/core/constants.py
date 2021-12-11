@@ -4,6 +4,9 @@ HOURS_PER_DAY = 14
 DAYS_PER_WEEK = 7
 UNINORTE_SCHEDULE_SIZE = (HOURS_PER_DAY, DAYS_PER_WEEK)
 
+AVG_BOUNDRIES = (1, 13)
+SD_BOUNDRIES = (0, 6)
+
 BIT_MATRIX_DATA_TYPE = "int16"
 
 DAYS = ("Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sábado", "Domingo")

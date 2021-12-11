@@ -1,6 +1,13 @@
 import numpy as np
 
-from base.core.constants import BIT_MATRIX_DATA_TYPE, DAYS, HOURS, HOURS_PER_DAY
+from base.core.constants import (
+    AVG_BOUNDRIES,
+    BIT_MATRIX_DATA_TYPE,
+    DAYS,
+    HOURS,
+    HOURS_PER_DAY,
+    SD_BOUNDRIES,
+)
 from base.core.gap_filters import sort_results
 
 DEFAULT_MATRIX_COMPUTER_OPTIONS = {
@@ -83,6 +90,24 @@ class DistanceMatrixComputer:
         return self.deviation_matrix
 
 
+def get_gap_quality_average(avg, min_avg, max_avg):
+    # start from 0
+    max_avg -= min_avg
+    avg -= min_avg
+
+    return 1 - (avg / max_avg)
+
+
+def get_gap_quality(avg, sd, min_avg, max_avg, min_sd, max_sd):
+    # start from 0
+    max_avg -= min_avg
+    avg -= min_avg
+    max_sd -= min_sd
+    sd -= min_sd
+
+    return 1 - ((avg + sd) / (max_avg + max_sd))
+
+
 class GapFinder:
 
     """
@@ -106,16 +131,27 @@ class GapFinder:
             for j, day in enumerate(DAYS):
                 if avg_matrix[i][j] != 0:
 
+                    avg = float(avg_matrix[i][j])
+
                     new_gap_item = {
                         "day": day,
                         "hour": hour,
-                        "avg": float(avg_matrix[i][j]),
+                        "avg": avg,
+                        "quality": get_gap_quality_average(avg, *AVG_BOUNDRIES),
                         "day_index": j,
                         "hour_index": i,
                     }
 
                     if sd_matrix is not None:
-                        new_gap_item.update({"sd": float(sd_matrix[i][j])})
+                        sd = float(sd_matrix[i][j])
+                        new_gap_item.update(
+                            {
+                                "sd": sd,
+                                "quality": get_gap_quality(
+                                    avg, sd, *AVG_BOUNDRIES, *SD_BOUNDRIES
+                                ),
+                            }
+                        )
 
                     self.results.append(new_gap_item)
 
