@@ -234,7 +234,7 @@ class MeetingSerializer(serializers.Serializer):
             file = data["usernames_file"]
             try:
                 content = file.read().decode("utf-8")
-                usernames = content.split("\n")
+                usernames = content.splitlines()
                 # ss = string schedules
                 ss, users_not_found1 = get_string_schedules_from_username(usernames)
                 final_ss.extend(ss)

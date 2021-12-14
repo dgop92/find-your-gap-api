@@ -4,8 +4,8 @@ from decouple import Csv, config
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-ALLOWED_HOSTS = []
-CORS_ORIGIN_WHITELIST = config("CORS_ORIGIN_WHITELIST", cast=Csv(), default=[])
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv(), default="")
+CORS_ORIGIN_WHITELIST = config("CORS_ORIGIN_WHITELIST", cast=Csv(), default="")
 
 INSTALLED_APPS = [
     "django.contrib.admin",

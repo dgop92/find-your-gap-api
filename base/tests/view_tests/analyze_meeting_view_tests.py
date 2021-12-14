@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 
-from base.tests.data_factories import get_random_user
+from base.data_factories import get_random_user
 from base.tests.test_utils import TestsMixin, create_inmemory_file
 from base.urls import analyze_view_name
 

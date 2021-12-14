@@ -1,8 +1,8 @@
 from django.test import TestCase
 
+from base.data_factories import get_random_user
 from base.models import UninorteUser
 from base.serializers import MeetingSerializer
-from base.tests.data_factories import get_random_user
 from base.tests.test_utils import create_inmemory_file
 
 # test_schedule_2
