@@ -8,9 +8,7 @@ SECRET_KEY = config("SECRET_KEY")
 DEBUG = False
 
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv(), default=[])
-CORS_ORIGIN_WHITELIST = config("CORS_ORIGIN_WHITELIST", cast=Csv(), default=[])
 
-MIDDLEWARE.insert(0, "corsheaders.middleware.CorsMiddleware")
 MIDDLEWARE.insert(2, "whitenoise.middleware.WhiteNoiseMiddleware")
 
 db_from_env = dj_database_url.config(conn_max_age=600)
