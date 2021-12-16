@@ -3,6 +3,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
 from base.core.analyze_meetings import get_schedule_meeting_data
+from base.core.automatic_register import get_ss_from_list_of_indices
 from base.core.constants import DAYS
 from base.core.distance_algorithms import get_distance_matrix_from_string_schedule
 from base.core.finder import (
@@ -271,6 +272,67 @@ class MeetingSerializer(serializers.Serializer):
         else:
             ss_to_filter = None
         return get_schedule_meeting_data(final_ss, ss_to_filter)
+
+
+class AutomaticRegisterSerializer(serializers.Serializer):
+
+    username = serializers.CharField(
+        min_length=1,
+        max_length=30,
+        validators=[
+            UniqueValidator(
+                queryset=UninorteUser.objects.all(),
+                message=_("El usuario ingresado ya fue registrado"),
+            )
+        ],
+    )
+
+    list_of_indices = serializers.ListField(
+        child=serializers.ListField(
+            child=serializers.IntegerField(max_value=100, min_value=-100),
+            max_length=2,
+            min_length=2,
+        ),
+        max_length=98,
+        error_messages={
+            "not_a_list": _(
+                'Se esperaba una lista de items pero se obtuvo el tipo "{input_type}".'
+            ),
+            "max_length": _("Es imposible tener más de 98 horas de clases a la semana"),
+        },
+    )
+
+    def validate_list_of_indices(self, raw_list_of_indices):
+
+        for day_hour in raw_list_of_indices:
+            hour_index, day_index = day_hour
+            if not (0 <= day_index <= 6):
+                raise serializers.ValidationError(
+                    _("El índice del día debe estar entre 0 y 6")
+                )
+            if not (0 <= hour_index <= 12):
+                raise serializers.ValidationError(
+                    _("El índice de la hora debe estar entre 0 y 12")
+                )
+
+        return raw_list_of_indices
+
+    def create(self, validated_data):
+        list_of_indices = validated_data["list_of_indices"]
+        username = validated_data["username"]
+        string_schedule = get_ss_from_list_of_indices(list_of_indices)
+
+        UninorteUser.objects.create(
+            username=username,
+            schedule=string_schedule,
+        )
+
+        data = {
+            "username": username,
+            "schedule": string_schedule,
+        }
+
+        return data
 
 
 class UninorteUserSerializer(serializers.ModelSerializer):

@@ -4,6 +4,7 @@ from rest_framework.response import Response
 
 from base.models import UninorteUser
 from base.serializers import (
+    AutomaticRegisterSerializer,
     MeetingSerializer,
     RegisterSerializer,
     UninorteUserSerializer,
@@ -59,6 +60,22 @@ def analyze_meeting_view(request):
         return Response(results, status=status.HTTP_200_OK)
     else:
         return Response(meeting_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+def automatic_register_view(request):
+
+    """
+    Register a new uninorte user with his string schedule, given a list of indices
+
+    """
+    serializer = AutomaticRegisterSerializer(data=request.data)
+
+    if serializer.is_valid():
+        results = serializer.save()
+        return Response(results, status=status.HTTP_200_OK)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UninorteUserDetail(generics.RetrieveAPIView):
