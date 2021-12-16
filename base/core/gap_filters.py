@@ -13,5 +13,5 @@ def limit_results(results, limit=-1):
 
 def filter_by_days(results, day_indices=None):
     if day_indices:
-        return list(filter(lambda e: e["day_index"] in day_indices, results))
+        return list(filter(lambda e: e["day_index"] not in day_indices, results))
     return results

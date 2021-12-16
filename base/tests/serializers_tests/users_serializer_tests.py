@@ -155,7 +155,7 @@ class TestUsersSerializer(TestCase):
 
         self.assertEqual(len(found_gaps_indices), 5)
         for gap_index_tuple in found_gaps_indices:
-            self.assertTrue(gap_index_tuple[1] == 0 or gap_index_tuple[1] == 1)
+            self.assertTrue(gap_index_tuple[1] not in [0, 1])
 
     def test_results_with_sd(self):
 

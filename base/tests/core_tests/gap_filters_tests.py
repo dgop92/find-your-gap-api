@@ -102,8 +102,8 @@ class TestGapFilters(unittest.TestCase):
 
         results = filter_by_days(test_gaps, day_indices=[1, 0])
         filtered_results = set(map(lambda e: e["hour_index"], results))
-        self.assertSetEqual(filtered_results, set([11, 12, 6]))
+        self.assertSetEqual(filtered_results, set([3]))
 
-        results = filter_by_days(test_gaps, day_indices=[1, 0])
+        results = filter_by_days(test_gaps, day_indices=[2])
         filtered_results = set(map(lambda e: e["hour_index"], results))
         self.assertSetEqual(filtered_results, set([11, 12, 6]))
