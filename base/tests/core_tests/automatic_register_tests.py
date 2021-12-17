@@ -29,4 +29,4 @@ class TestAutomaticRegister(unittest.TestCase):
         ]
 
         ss = get_ss_from_list_of_indices(list_of_indicies)
-        self.assertTrue(ss, expected_ss)
+        self.assertEqual(ss, expected_ss)

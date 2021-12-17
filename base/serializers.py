@@ -293,11 +293,13 @@ class AutomaticRegisterSerializer(serializers.Serializer):
             max_length=2,
             min_length=2,
         ),
+        allow_empty=False,
         max_length=98,
         error_messages={
             "not_a_list": _(
                 'Se esperaba una lista de items pero se obtuvo el tipo "{input_type}".'
             ),
+            "empty": _("El horario no puede estar vacío"),
             "max_length": _("Es imposible tener más de 98 horas de clases a la semana"),
         },
     )

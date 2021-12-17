@@ -73,7 +73,7 @@ def automatic_register_view(request):
 
     if serializer.is_valid():
         results = serializer.save()
-        return Response(results, status=status.HTTP_200_OK)
+        return Response(results, status=status.HTTP_201_CREATED)
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

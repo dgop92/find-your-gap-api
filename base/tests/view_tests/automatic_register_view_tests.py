@@ -39,7 +39,7 @@ class TestAutomaticRegisterView(TestCase, TestsMixin):
         self.post(
             self.automatic_url,
             data=data,
-            status_code=status.HTTP_200_OK,
+            status_code=status.HTTP_201_CREATED,
         )
 
     def test_invalid_response(self):
