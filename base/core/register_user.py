@@ -1,11 +1,10 @@
 import json
 
-import numpy as np
 import requests
 from django.conf import settings
 from django.utils.module_loading import import_string
 
-from base.core.constants import BIT_MATRIX_DATA_TYPE, UNINORTE_SCHEDULE_SIZE
+from base.core.constants import DAYS_PER_WEEK
 
 
 def get_schedule_data_function():
@@ -19,7 +18,7 @@ class RegisterUserError(Exception):
 
 
 class ClassHoursGetter:
-    def __init__(self, request_data) -> None:
+    def __init__(self, request_data=None):
         self.request_data = request_data
 
     def get_class_hours(self):
@@ -27,12 +26,8 @@ class ClassHoursGetter:
 
 
 class StringScheduleProcessor:
-    def __init__(self, class_hours_getter) -> None:
+    def __init__(self, class_hours_getter):
         self.class_hours_getter = class_hours_getter
-        self.class_hours = None
-        self.bit_matrix = np.zeros(
-            shape=UNINORTE_SCHEDULE_SIZE, dtype=BIT_MATRIX_DATA_TYPE
-        )
         self.string_schedule = ""
         self.error_message = ""
 
@@ -40,25 +35,19 @@ class StringScheduleProcessor:
 
         try:
             self.class_hours = self.class_hours_getter.get_class_hours()
-            self.build_bit_matrix()
-            self.from_bit_matrix_to_string_schedule()
+            self.find_ss_from_class_hours()
         except RegisterUserError as register_user_error:
             self.error_message = str(register_user_error)
         except Exception:
             self.error_message = "Lo sentimos, ha ocurrido un error inesperado"
 
-    def build_bit_matrix(self):
-
-        for index_pair in self.class_hours:
-            i = index_pair[0]
-            j = index_pair[1]
-            self.bit_matrix[i][j] = 1
-
-    def from_bit_matrix_to_string_schedule(self):
-
-        for row in self.bit_matrix:
-            for element in row:
-                self.string_schedule += str(element)
+    def find_ss_from_class_hours(self):
+        ss_list = [0 for _ in range(98)]
+        for day_hour in self.class_hours:
+            hour_index, day_index = day_hour
+            pos = hour_index * DAYS_PER_WEEK + day_index
+            ss_list[pos] = 1
+        self.string_schedule = "".join(map(str, ss_list))
 
     def is_string_schedule_retrieved(self):
         return self.string_schedule != ""
@@ -164,3 +153,12 @@ class APIUserRegister(ClassHoursGetter):
             end_hour += 12
 
         return end_hour - start_hour == 2
+
+
+class AutomaticRegisterGetter(ClassHoursGetter):
+    def __init__(self, request_data=None):
+        self.list_of_indices = request_data["list_of_indices"]
+        super().__init__(request_data=request_data)
+
+    def get_class_hours(self):
+        return self.list_of_indices

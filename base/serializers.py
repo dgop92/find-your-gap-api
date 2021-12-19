@@ -3,7 +3,6 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
 from base.core.analyze_meetings import get_schedule_meeting_data
-from base.core.automatic_register import get_ss_from_list_of_indices
 from base.core.constants import DAYS
 from base.core.distance_algorithms import get_distance_matrix_from_string_schedule
 from base.core.finder import (
@@ -12,7 +11,11 @@ from base.core.finder import (
     GapFinder,
 )
 from base.core.gap_filters import filter_by_days, limit_results
-from base.core.register_user import APIUserRegister, StringScheduleProcessor
+from base.core.register_user import (
+    APIUserRegister,
+    AutomaticRegisterGetter,
+    StringScheduleProcessor,
+)
 from base.custom_validators import FileExtensionValidator
 from base.models import UninorteUser
 
@@ -320,9 +323,13 @@ class AutomaticRegisterSerializer(serializers.Serializer):
         return raw_list_of_indices
 
     def create(self, validated_data):
-        list_of_indices = validated_data["list_of_indices"]
+        string_schedule_processor = StringScheduleProcessor(
+            AutomaticRegisterGetter(validated_data)
+        )
+        # is not necessary to validate the data because we receive the list immediately
+        string_schedule_processor.find_user_string_schedule()
         username = validated_data["username"]
-        string_schedule = get_ss_from_list_of_indices(list_of_indices)
+        string_schedule = string_schedule_processor.string_schedule
 
         UninorteUser.objects.create(
             username=username,

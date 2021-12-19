@@ -1,4 +1,3 @@
-import numpy as np
 from django.test import TestCase, override_settings
 
 from base.core.register_user import (
@@ -122,34 +121,34 @@ class TestAPIUserRegister(TestCase):
 
 
 class TestStringScheduleProcessor(TestCase):
-    @override_settings(SCHEDULE_DATA_FUNCTION=DATA_FUNC_TEMPLATE.format(4))
-    def test_build_bit_matrix(self):
+    def test_find_ss_from_class_hours(self):
 
-        aur = APIUserRegister(DUMMY_REQUEST_DATA)
-        sc = StringScheduleProcessor(aur)
-        sc.class_hours = aur.get_class_hours()
-        sc.build_bit_matrix()
+        expected_ss = "01000000100100001010001000000000000000000000000000000000011010001101001010000111000000000000000000"
 
-        expected_matrix = np.array(
-            [
-                [1, 0, 0, 0, 0, 0, 0],
-                [1, 1, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0],
-                [0, 1, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 1, 0, 0, 0],
-                [0, 0, 0, 1, 0, 0, 0],
-            ]
-        )
+        list_of_indicies = [
+            (0, 1),
+            (1, 1),
+            (1, 4),
+            (2, 2),
+            (2, 4),
+            (3, 1),
+            (8, 1),
+            (8, 2),
+            (8, 4),
+            (9, 1),
+            (9, 2),
+            (9, 4),
+            (10, 0),
+            (10, 2),
+            (11, 0),
+            (11, 1),
+            (11, 2),
+        ]
 
-        self.assertTrue(np.array_equal(sc.bit_matrix, expected_matrix))
+        string_schedule_processor = StringScheduleProcessor(None)
+        string_schedule_processor.class_hours = list_of_indicies
+        string_schedule_processor.find_ss_from_class_hours()
+        self.assertEqual(string_schedule_processor.string_schedule, expected_ss)
 
     @override_settings(SCHEDULE_DATA_FUNCTION=DATA_FUNC_TEMPLATE.format(4))
     def test_find_user_string_schedule(self):
