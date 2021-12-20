@@ -5,6 +5,10 @@ def sort_results(results, with_sd=False):
         return sorted(results, key=lambda gap: gap["avg"])
 
 
+def sort_results_by_quality(results):
+    return sorted(results, key=lambda gap: gap["quality"], reverse=True)
+
+
 def limit_results(results, limit=-1):
     if limit != -1:
         return results[:limit]
