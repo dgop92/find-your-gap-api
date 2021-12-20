@@ -155,7 +155,7 @@ class APIUserRegister(ClassHoursGetter):
         return end_hour - start_hour == 2
 
 
-class AutomaticRegisterGetter(ClassHoursGetter):
+class ManualRegisterGetter(ClassHoursGetter):
     def __init__(self, request_data=None):
         self.list_of_indices = request_data["list_of_indices"]
         super().__init__(request_data=request_data)

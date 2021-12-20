@@ -2,11 +2,11 @@ from django.test import TestCase
 
 from base.data_factories import get_random_schedule
 from base.models import UninorteUser
-from base.serializers import AutomaticRegisterSerializer
+from base.serializers import ManualRegisterSerializer
 from base.tests.test_utils import InstanceAssertionsMixin
 
 
-class TestAutomaticRegisterSerializer(TestCase, InstanceAssertionsMixin):
+class TestManualRegisterSerializer(TestCase, InstanceAssertionsMixin):
     @classmethod
     def setUpTestData(cls):
         cls.user_to_filter = UninorteUser.objects.create(
@@ -39,7 +39,7 @@ class TestAutomaticRegisterSerializer(TestCase, InstanceAssertionsMixin):
 
         data = {"list_of_indices": list_of_indices, "username": "a_user"}
 
-        serializer = AutomaticRegisterSerializer(data=data)
+        serializer = ManualRegisterSerializer(data=data)
         self.assertTrue(serializer.is_valid())
         serializer.save()
         self.assert_instance_exists(UninorteUser, username="a_user")
@@ -55,7 +55,7 @@ class TestAutomaticRegisterSerializer(TestCase, InstanceAssertionsMixin):
 
         data = {"list_of_indices": list_of_indices, "username": "a_user"}
 
-        serializer = AutomaticRegisterSerializer(data=data)
+        serializer = ManualRegisterSerializer(data=data)
         self.assertFalse(serializer.is_valid())
         self.assertTrue("list_of_indices" in serializer.errors)
 
@@ -70,7 +70,7 @@ class TestAutomaticRegisterSerializer(TestCase, InstanceAssertionsMixin):
 
         data = {"list_of_indices": list_of_indices, "username": "a_user"}
 
-        serializer = AutomaticRegisterSerializer(data=data)
+        serializer = ManualRegisterSerializer(data=data)
         self.assertFalse(serializer.is_valid())
         self.assertTrue("list_of_indices" in serializer.errors)
 
@@ -85,6 +85,6 @@ class TestAutomaticRegisterSerializer(TestCase, InstanceAssertionsMixin):
 
         data = {"list_of_indices": list_of_indices, "username": "user1"}
 
-        serializer = AutomaticRegisterSerializer(data=data)
+        serializer = ManualRegisterSerializer(data=data)
         self.assertFalse(serializer.is_valid())
         self.assertTrue("username" in serializer.errors)

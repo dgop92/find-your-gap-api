@@ -13,7 +13,7 @@ from base.core.finder import (
 from base.core.gap_filters import filter_by_days, limit_results
 from base.core.register_user import (
     APIUserRegister,
-    AutomaticRegisterGetter,
+    ManualRegisterGetter,
     StringScheduleProcessor,
 )
 from base.custom_validators import FileExtensionValidator
@@ -277,7 +277,7 @@ class MeetingSerializer(serializers.Serializer):
         return get_schedule_meeting_data(final_ss, ss_to_filter)
 
 
-class AutomaticRegisterSerializer(serializers.Serializer):
+class ManualRegisterSerializer(serializers.Serializer):
 
     username = serializers.CharField(
         min_length=1,
@@ -324,7 +324,7 @@ class AutomaticRegisterSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         string_schedule_processor = StringScheduleProcessor(
-            AutomaticRegisterGetter(validated_data)
+            ManualRegisterGetter(validated_data)
         )
         # is not necessary to validate the data because we receive the list immediately
         string_schedule_processor.find_user_string_schedule()

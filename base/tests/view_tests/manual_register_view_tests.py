@@ -3,13 +3,13 @@ from django.urls import reverse
 from rest_framework import status
 
 from base.tests.test_utils import TestsMixin
-from base.urls import automatic_register_view_name
+from base.urls import manual_register_view_name
 
 
-class TestAutomaticRegisterView(TestCase, TestsMixin):
+class TestManualRegisterView(TestCase, TestsMixin):
     def setUp(self):
         self.init()
-        self.automatic_url = reverse(automatic_register_view_name)
+        self.manual_url = reverse(manual_register_view_name)
 
     def test_valid_response(self):
 
@@ -37,7 +37,7 @@ class TestAutomaticRegisterView(TestCase, TestsMixin):
         data = {"list_of_indices": list_of_indices, "username": "a_user"}
 
         self.post(
-            self.automatic_url,
+            self.manual_url,
             data=data,
             status_code=status.HTTP_201_CREATED,
         )
@@ -47,7 +47,7 @@ class TestAutomaticRegisterView(TestCase, TestsMixin):
         data = {}
 
         self.post(
-            self.automatic_url,
+            self.manual_url,
             data=data,
             status_code=status.HTTP_400_BAD_REQUEST,
         )

@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 from base.models import UninorteUser
 from base.serializers import (
-    AutomaticRegisterSerializer,
+    ManualRegisterSerializer,
     MeetingSerializer,
     RegisterSerializer,
     UninorteUserSerializer,
@@ -63,13 +63,13 @@ def analyze_meeting_view(request):
 
 
 @api_view(["POST"])
-def automatic_register_view(request):
+def manual_register_view(request):
 
     """
     Register a new uninorte user with his string schedule, given a list of indices
 
     """
-    serializer = AutomaticRegisterSerializer(data=request.data)
+    serializer = ManualRegisterSerializer(data=request.data)
 
     if serializer.is_valid():
         results = serializer.save()
