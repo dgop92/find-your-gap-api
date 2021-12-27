@@ -8,7 +8,7 @@ from base.core.constants import (
     HOURS_PER_DAY,
     SD_BOUNDRIES,
 )
-from base.core.gap_filters import sort_results
+from base.core.gap_filters import sort_results_by_quality
 
 DEFAULT_MATRIX_COMPUTER_OPTIONS = {
     "compute_sd": False,
@@ -155,7 +155,7 @@ class GapFinder:
 
                     self.results.append(new_gap_item)
 
-        self.results = sort_results(self.results, with_sd=self.compute_sd)
+        self.results = sort_results_by_quality(self.results)
 
     def apply_filter(self, func, *args, **kwargs):
         self.results = func(self.results, *args, **kwargs)
