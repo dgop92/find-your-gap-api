@@ -99,6 +99,20 @@ class TestMeetingSerializer(TestCase):
         self.assertFalse(meeting_serializer.is_valid())
         self.assertTrue("non_field_errors" in meeting_serializer.errors)
 
+    def test_clean_duplicate_usernames(self):
+
+        usernames_file = create_inmemory_file(
+            content=b"my_user_0\nmy_user_1\nmy_user_1\nmy_user_2"
+        )
+
+        data = {"usernames_file": usernames_file}
+
+        meeting_serializer = MeetingSerializer(data=data)
+        self.assertTrue(meeting_serializer.is_valid())
+        validated_data = meeting_serializer.validated_data
+        self.assertEqual(len(validated_data["final_ss"]), 3)
+        self.assertSetEqual(set(validated_data["final_ss"]), self.set_of_schedules)
+
     def test_invalid_username_to_filter(self):
 
         data = {
