@@ -13,7 +13,7 @@ urlpatterns = [
     url(r"analyze", views.analyze_meeting_view, name=analyze_view_name),
     url(
         r"manual",
-        views.manual_register_view,
+        views.ManualRegisterView.as_view(),
         name=manual_register_view_name,
     ),
     url(

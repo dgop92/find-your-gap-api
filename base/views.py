@@ -1,6 +1,7 @@
-from rest_framework import generics, status
+from rest_framework import generics, status, views
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.throttling import ScopedRateThrottle
 
 from base.models import UninorteUser
 from base.serializers import (
@@ -62,20 +63,22 @@ def analyze_meeting_view(request):
         return Response(meeting_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(["POST"])
-def manual_register_view(request):
+class ManualRegisterView(views.APIView):
 
-    """
-    Register a new uninorte user with his string schedule, given a list of indices
+    throttle_scope = "manual"
+    throttle_classes = [ScopedRateThrottle]
 
-    """
-    serializer = ManualRegisterSerializer(data=request.data)
+    def post(self, request):
+        """
+        Register a new uninorte user with his string schedule, given a list of indices
 
-    if serializer.is_valid():
-        results = serializer.save()
-        return Response(results, status=status.HTTP_201_CREATED)
-    else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        """
+        serializer = ManualRegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            results = serializer.save()
+            return Response(results, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UninorteUserDetail(generics.RetrieveAPIView):
