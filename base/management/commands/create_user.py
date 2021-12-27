@@ -18,11 +18,14 @@ class Command(BaseCommand):
             type=str,
         )
 
+        parser.add_argument("verified", type=bool, default=False)
+
     def handle(self, *args, **options):
         try:
             UninorteUser.objects.create(
                 username=options["username"],
                 schedule=options["string_schedule"],
+                schedule=options["verified"],
             )
         except Exception as e:
-            print(e)
+            self.stdout.write(str(e))

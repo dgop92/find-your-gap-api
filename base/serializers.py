@@ -80,6 +80,7 @@ class RegisterSerializer(serializers.Serializer):
         UninorteUser.objects.create(
             username=validate_data["username"],
             schedule=validate_data["string_schedule"],
+            verified=True,
         )
 
         data = {

@@ -90,3 +90,4 @@ class TestRegisterSerializer(TestCase, InstanceAssertionsMixin):
         uni_user_data = users_serializers.save()
         self.assertEqual(uni_user_data["schedule"], string_schedule2)
         self.assert_instance_exists(UninorteUser, username="some_username")
+        self.assertTrue(UninorteUser.objects.get(username="some_username").verified)

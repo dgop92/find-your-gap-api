@@ -43,6 +43,7 @@ class TestManualRegisterSerializer(TestCase, InstanceAssertionsMixin):
         self.assertTrue(serializer.is_valid())
         serializer.save()
         self.assert_instance_exists(UninorteUser, username="a_user")
+        self.assertFalse(UninorteUser.objects.get(username="a_user").verified)
 
     def test_hour_out_of_range(self):
 
