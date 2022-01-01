@@ -1,24 +1,33 @@
 {
-    "count": 34,
-    "gaps": [
-        {
-            "day": "Lunes",
-            "hour": "6:30 AM",
-            "avg": 1.0,
-            "sd": 0.0
-        },
-        {
-            "day": "Martes",
-            "hour": "6:30 AM",
-            "avg": 1.0,
-            "sd": 0.0
-        },
-        {
-            "day": "Jueves",
-            "hour": "7:30 AM",
-            "avg": 1.0,
-            "sd": 0.0
-        }
-    ],
-    "note": "Son 34 resultados, como ejemplo se observan 3"
+  "count": 34,
+  "gaps": [
+    {
+      "day": "Miercoles",
+      "hour": "11:30 AM",
+      "avg": 1.6666666269302368,
+      "quality": 0.9105846848752763,
+      "day_index": 2,
+      "hour_index": 5,
+      "sd?": 0.9428090453147888
+    },
+    {
+      "day": "Martes",
+      "hour": "7:30 PM",
+      "avg": 2.3333332538604736,
+      "quality": 0.8997367918491364,
+      "day_index": 1,
+      "hour_index": 13,
+      "sd?": 0.471404492855072
+    },
+    {
+      "day": "Viernes",
+      "hour": "10:30 AM",
+      "avg": 2.3333332538604736,
+      "quality": 0.8735476533571879,
+      "day_index": 4,
+      "hour_index": 4,
+      "sd?": 0.942808985710144
+    }
+  ],
+  "note": "Son 34 resultados, como ejemplo se observan 3. sd?, significa que es opcional"
 }

@@ -1,8 +1,8 @@
 # Find Your Gap API
 
-Find your gap was created to find common gaps (free hours between the U classes) given the schedules from a group of classmates. It will order the results based on how close the gaps are from classes
+Find your gap was created to find common gaps (free hours between the U classes) given the schedules of a group of classmates. It will order the results based on how close the gaps are from classes
 
-This project is the API, [click here to look the client side](https://github.com/dgop92/find-your-gap)
+This project is the API, The client is [GapFind](https://github.com/dgop92/GFind)
 
 ## Project setup
 
