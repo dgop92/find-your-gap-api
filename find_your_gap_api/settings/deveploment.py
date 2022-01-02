@@ -14,3 +14,4 @@ DATABASES = {
 }
 
 SCHEDULE_DATA_FUNCTION = "base.core.register_user.get_schedule_data_for_development"
+DEL_UNVERIFIED_SECRET_CODE = "DEV-CODE"

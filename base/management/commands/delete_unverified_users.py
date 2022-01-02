@@ -1,11 +1,9 @@
+from datetime import timedelta
+
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 
 from base.models import UninorteUser
-
-# heroku cronun task manage this
-""" UninorteUser.objects.filter(
-    created_at__lte=timezone.now() - timedelta(weeks=1)
-) """
 
 
 class Command(BaseCommand):
@@ -13,5 +11,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        UninorteUser.objects.filter(verified=False).delete()
-        self.stdout.write("Successfully deleted unverified users")
+        amount, _ = (
+            UninorteUser.objects.filter(verified=False)
+            .filter(created_at__lte=timezone.now() - timedelta(weeks=1))
+            .delete()
+        )
+        self.stdout.write(f"Successfully deleted {amount} unverified users")

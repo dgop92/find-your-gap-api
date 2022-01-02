@@ -1,5 +1,8 @@
+from datetime import datetime
 from io import StringIO
+from unittest.mock import patch
 
+import pytz
 from django.core.management import call_command
 from django.test import TestCase
 
@@ -22,9 +25,14 @@ class DeleteUnverifiedUsers(TestCase, InstanceAssertionsMixin):
         )
 
     def test_users_deletion(self):
-        out = StringIO()
-        call_command("delete_unverified_users", stdout=out)
-        self.assert_instance_exists(UninorteUser, username="user2")
-        self.assert_instance_does_not_exist(UninorteUser, username="user1")
-        self.assert_instance_does_not_exist(UninorteUser, username="user3")
-        self.assertIn("Successfully deleted unverified users", out.getvalue())
+        # 2030, who knows if the app is still working
+        with patch(
+            "django.utils.timezone.now",
+            return_value=datetime(2030, 2, 24, 11, tzinfo=pytz.timezone("utc")),
+        ):
+            out = StringIO()
+            call_command("delete_unverified_users", stdout=out)
+            self.assert_instance_exists(UninorteUser, username="user2")
+            self.assert_instance_does_not_exist(UninorteUser, username="user1")
+            self.assert_instance_does_not_exist(UninorteUser, username="user3")
+            self.assertIn("Successfully deleted 2 unverified users", out.getvalue())
