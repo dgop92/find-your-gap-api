@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from base.models import UninorteUser
 
 
-@api_view(["DELETE"])
+@api_view(["POST"])
 def delete_unverified_users_view(request):
 
     """
@@ -17,7 +17,7 @@ def delete_unverified_users_view(request):
 
     """
 
-    secret_code = request.query_params.get("secret_code", "")
+    secret_code = request.data.get("secret_code", "")
 
     if secret_code == settings.DEL_UNVERIFIED_SECRET_CODE:
         amount, _ = (
