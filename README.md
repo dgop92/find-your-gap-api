@@ -101,3 +101,11 @@ For this example we'll use the following schedule, a simplified 5x4 matrix
 We sum all distance matrices of each user, then compute the average and a standard deviation to get the _average matrix_ and _standard-deviation matrix_
 
 Given these matrices, we find the common gaps and sort them based on how close the gaps are from classes
+
+## What I learned
+
+* Real problem analysis
+* Algorithm development
+* Better unit tests
+* Pre-commit hooks
+* Different settings files (CI, DEV, PROD)
