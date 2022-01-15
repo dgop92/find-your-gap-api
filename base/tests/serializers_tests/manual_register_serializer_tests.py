@@ -51,7 +51,7 @@ class TestManualRegisterSerializer(TestCase, InstanceAssertionsMixin):
             (0, 1),
             (1, 1),
             (1, 4),
-            (13, 2),
+            (16, 2),
         ]
 
         data = {"list_of_indices": list_of_indices, "username": "a_user"}

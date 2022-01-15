@@ -320,9 +320,9 @@ class ManualRegisterSerializer(serializers.Serializer):
                 raise serializers.ValidationError(
                     _("El índice del día debe estar entre 0 y 6")
                 )
-            if not (0 <= hour_index <= 12):
+            if not (0 <= hour_index <= 13):
                 raise serializers.ValidationError(
-                    _("El índice de la hora debe estar entre 0 y 12")
+                    _("El índice de la hora debe estar entre 0 y 13")
                 )
 
         return raw_list_of_indices
