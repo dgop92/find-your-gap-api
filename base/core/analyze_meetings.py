@@ -17,6 +17,17 @@ def get_sum_meeting_matrix(string_schedules):
     return np.sum(bit_matrices, axis=0)
 
 
+def filter_results(result, filter_schedule):
+
+    i = result["hour_index"]
+    j = result["day_index"]
+
+    if j > 4:
+        return False
+
+    return not is_needed_to_ignore_hour(filter_schedule, i, j)
+
+
 def get_schedule_meeting_data(string_schedules, filter_schedule=None):
     sum_matrix = get_sum_meeting_matrix(string_schedules)
     total_students = len(string_schedules)
@@ -24,8 +35,6 @@ def get_schedule_meeting_data(string_schedules, filter_schedule=None):
     results = []
     for i in range(hours):
         for j in range(days):
-            if j > 4 or is_needed_to_ignore_hour(filter_schedule, i, j):
-                break
 
             # the number of students available at this time
             number_of_students = total_students - sum_matrix[i][j]
@@ -39,4 +48,8 @@ def get_schedule_meeting_data(string_schedules, filter_schedule=None):
                 }
             )
 
-    return {"total_students": total_students, "results": results}
+    filtered_results = list(
+        filter(lambda result: filter_results(result, filter_schedule), results)
+    )
+
+    return {"total_students": total_students, "results": filtered_results}
