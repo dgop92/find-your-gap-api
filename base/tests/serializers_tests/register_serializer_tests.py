@@ -52,7 +52,8 @@ class TestRegisterSerializer(TestCase, InstanceAssertionsMixin):
         self.assertFalse(users_serializers.is_valid())
         self.assertTrue("username" in users_serializers.errors)
 
-    def test_unique_username(self):
+    @override_settings(SCHEDULE_DATA_FUNCTION=DATA_FUNC_TEMPLATE.format(4))
+    def test_can_update_schedule(self):
 
         data = {
             "username": "user_rep",
@@ -61,8 +62,12 @@ class TestRegisterSerializer(TestCase, InstanceAssertionsMixin):
         }
 
         users_serializers = RegisterSerializer(data=data)
-        self.assertFalse(users_serializers.is_valid())
-        self.assertTrue("username" in users_serializers.errors)
+        self.assertTrue(users_serializers.is_valid())
+        users_serializers.save()
+        self.assert_instance_exists(UninorteUser, username="user_rep")
+        user = UninorteUser.objects.get(username="user_rep")
+        self.assertEqual(user.schedule, string_schedule2)
+        self.assertTrue(user.verified)
 
     def test_mismatch_password(self):
 
@@ -87,7 +92,8 @@ class TestRegisterSerializer(TestCase, InstanceAssertionsMixin):
 
         users_serializers = RegisterSerializer(data=data)
         self.assertTrue(users_serializers.is_valid())
-        uni_user_data = users_serializers.save()
-        self.assertEqual(uni_user_data["schedule"], string_schedule2)
+        users_serializers.save()
+        user = UninorteUser.objects.get(username="some_username")
         self.assert_instance_exists(UninorteUser, username="some_username")
-        self.assertTrue(UninorteUser.objects.get(username="some_username").verified)
+        self.assertEqual(user.schedule, string_schedule2)
+        self.assertTrue(user.verified)

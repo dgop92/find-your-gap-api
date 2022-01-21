@@ -37,12 +37,7 @@ class RegisterSerializer(serializers.Serializer):
     username = serializers.CharField(
         min_length=1,
         max_length=30,
-        validators=[
-            UniqueValidator(
-                queryset=UninorteUser.objects.all(),
-                message=_("El usuario ingresado ya fue registrado"),
-            )
-        ],
+        validators=[],
     )
 
     password = serializers.CharField(max_length=80)
@@ -77,10 +72,9 @@ class RegisterSerializer(serializers.Serializer):
 
     def create(self, validate_data):
 
-        UninorteUser.objects.create(
+        UninorteUser.objects.update_or_create(
             username=validate_data["username"],
-            schedule=validate_data["string_schedule"],
-            verified=True,
+            defaults={"schedule": validate_data["string_schedule"], "verified": True},
         )
 
         data = {
