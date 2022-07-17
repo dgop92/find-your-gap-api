@@ -1,0 +1,36 @@
+version: "3.1"
+
+networks:
+  main_network:
+    name: main_network
+
+services:
+
+  db:
+    image: postgres:13-alpine
+    restart: "no"
+    env_file:
+      - ./containers_files/envs/.postgres.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./containers_files/databases-data:/var/lib/postgresql
+    networks:
+      - main_network
+
+  gap_find_app:
+    container_name: gap_find_app
+    build:
+      context: .
+    restart: "no"
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./containers_files/envs/.dev.env
+    networks:
+      - main_network
+    command:
+      - sh
+      - run-dev.sh
+    depends_on:
+      - db
