@@ -6,7 +6,8 @@ networks:
 
 services:
 
-  db:
+  postgres_db:
+    container_name: postgres_db_container
     image: postgres:13-alpine
     restart: "no"
     env_file:
@@ -14,23 +15,24 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./containers_files/database-prod-data:/var/lib/postgresql
+      - ./containers_files/database-data:/var/lib/postgresql
     networks:
       - main_network
 
-  gap_find_app:
-    container_name: gap_find_app
+  gap_find_api:
+    container_name: gap_find_api_container
     build:
       context: .
+      dockerfile: Dockerfile.dev
     restart: "no"
     ports:
       - "8080:8080"
     env_file:
-      - ./containers_files/envs/.prod.env
+      - ./containers_files/envs/.dev.env
     networks:
       - main_network
     command:
       - sh
-      - run-prod.sh
+      - run-dev.sh
     depends_on:
-      - db
+      - postgres_db

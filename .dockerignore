@@ -18,3 +18,5 @@ Dockerfile
 *.env
 .pytest_cache
 .vscode
+containers_files
+db.sqlite3

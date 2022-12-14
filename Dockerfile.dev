@@ -1,3 +1,6 @@
+# To run a container using this image you must provide a database url in env vars
+# Note: db.sqlite3 won’t work
+
 FROM python:3.9-alpine3.13
 
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -24,4 +27,4 @@ USER app-user
 
 EXPOSE 8080
 
-CMD ["sh", "./run-prod.sh"]
+CMD ["sh", "./run-dev.sh"]
